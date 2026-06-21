@@ -106,7 +106,7 @@
   #epiB{ top:48vh; font-size:clamp(1.1rem,3vw,1.55rem); font-style:italic; color:#cdd9ee; letter-spacing:.06em; }
   #epiInv{ top:38vh; font-size:clamp(1.5rem,4.2vw,2.5rem); letter-spacing:.012em; }
   #epiMeta{ bottom:13vh; font-size:clamp(1.05rem,2.9vw,1.45rem); font-style:italic; color:#d7e2f4; }
-  #vowVeil{ position:fixed; inset:0; z-index:4; opacity:0; pointer-events:none; transition:opacity 1.4s ease; background:radial-gradient(125% 92% at 50% 33%, rgba(4,6,12,.82) 0%, rgba(4,6,12,.64) 42%, rgba(4,6,12,.28) 76%, rgba(4,6,12,0) 100%); -webkit-backdrop-filter:blur(5px) saturate(.82); backdrop-filter:blur(5px) saturate(.82); }
+  #vowVeil{ position:fixed; inset:0; z-index:4; opacity:0; pointer-events:none; transition:opacity 1.4s ease; background:radial-gradient(130% 96% at 50% 34%, rgba(3,5,11,.9) 0%, rgba(3,5,11,.78) 40%, rgba(3,5,11,.44) 74%, rgba(3,5,11,0) 100%); }
   #vowVeil.open{ opacity:1; }
   #vowMark{ position:fixed; top:11.5vh; left:0; right:0; margin:0 auto; width:160px; height:107px; z-index:8; opacity:0; pointer-events:none; cursor:pointer; transition:opacity 2.4s ease, filter 1.2s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); filter:drop-shadow(0 0 13px rgba(206,222,255,.22)); outline:none; -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
   #vowMark.show{ opacity:.72; pointer-events:auto; animation:vmBreath 6.4s ease-in-out infinite; }
@@ -729,7 +729,7 @@ function playIntro(){ document.body.classList.add("pre"); document.documentEleme
     .add(()=>{ introEl.style.display="none"; hint.classList.add("show"); });                                       /* galaxy alive (it turns) → the invitation to begin */
   // ── BEGIN — leaving the splash: the galaxy recedes; then the journey opens into the dark (NO galaxy in the experience) ──
   const bloom=(e)=>{ if(bloomed) return; if(e&&e.target&&e.target.closest&&e.target.closest("#lang,#sound")) return;   /* tapping language/sound must not begin */
-    bloomed=true; breath.kill(); document.body.classList.remove("await"); hint.classList.remove("show");
+    bloomed=true; breath.kill(); moteEl.style.opacity="0"; moteEl.style.display="none"; document.body.classList.remove("await"); hint.classList.remove("show");
     if(introEl.style.display!=="none") introEl.style.setProperty("--r","184%");                                     /* (in case begun before the iris finished) */
     gsap.timeline()
       .to(U.uBirth,{value:1,duration:0.35,ease:"power1.out"})                                                       /* make sure the galaxy is whole, even if begun early */
@@ -767,8 +767,10 @@ function buildWords(){ veil.innerHTML=""; LF.length=0;
     veil.appendChild(line); LF.push({li, appear:L0.at, step:L0.step, isLast:!!L0.last, el:line, words:items}); });
   measureWords(); }
 function measureWords(){
-  LF.forEach(L=>{ L.el.style.position="absolute"; L.el.style.left="50%"; L.el.style.top="50%"; L.el.style.transform="translate(-50%,-50%)"; L.el.style.whiteSpace="nowrap"; L.el.style.width="auto"; L.el.style.height="auto";
+  LF.forEach(L=>{ L.el.style.fontSize=""; L.el.style.position="absolute"; L.el.style.left="50%"; L.el.style.top="50%"; L.el.style.transform="translate(-50%,-50%)"; L.el.style.whiteSpace="nowrap"; L.el.style.width="auto"; L.el.style.height="auto";
     L.words.forEach(c=>{ c.el.style.position="static"; c.el.style.transform="none"; }); });
+  const fitMaxW=Math.min(innerWidth-20, innerWidth*0.93);                                                              // FIT: a single line wider than the screen (e.g. the long "Miles. An ocean…" line on a narrow phone) scales down just enough to sit on one screen
+  LF.forEach(L=>{ const lw=L.el.getBoundingClientRect().width; if(lw>fitMaxW){ const base=parseFloat(getComputedStyle(L.el).fontSize)||27; L.el.style.fontSize=(base*fitMaxW/lw).toFixed(2)+"px"; } });
   LF.forEach(L=>{ L.words.forEach(c=>{ const r=c.el.getBoundingClientRect(); c.hx=r.left; c.hy=r.top; c.w=r.width; c.h=r.height; }); });
   LF.forEach(L=>{ L.el.style.position="fixed"; L.el.style.left="0"; L.el.style.top="0"; L.el.style.transform="none"; L.el.style.width="0"; L.el.style.height="0";
     L.words.forEach(c=>{ c.el.style.position="fixed"; c.el.style.left="0"; c.el.style.top="0";
