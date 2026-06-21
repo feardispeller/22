@@ -195,7 +195,7 @@ const CONFIG = {
   light:[0.97,0.985,1.0], her:[0.75,0.88,1.0], him:[1.0,0.88,0.72],
   lines:[
     {t:"Tonight, we are apart.",                 at:0.050, step:0.060},
-    {t:"Miles. An ocean. A dark with no edges.",  at:0.115, step:0.060},
+    {t:"Miles. An ocean.\nA dark with no edges.",  at:0.115, step:0.060},
     {t:"And still — across all of it —",          at:0.175, step:0.055},
     {t:"I am reaching for you.",                  at:0.230, step:0.055},
     {t:"One orbit.",                              at:0.765, step:0.050},
@@ -210,7 +210,7 @@ const CONFIG = {
 // ── language: one experience, an EN/IT alt-switch (informal tu throughout) ──
 const MARRIED_YEAR=2025;                                                   // first anniversary = 22 June 2026
 const STR={
-  en:{ hero:["Tonight, we are apart.","Miles. An ocean. A dark with no edges.","And still — across all of it —","I am reaching for you.","One orbit.","Look at the shape a single year makes.","Infinity —","two loops, far apart at the edges,","never once apart at the center.","And this is only the first."],
+  en:{ hero:["Tonight, we are apart.","Miles. An ocean.\nA dark with no edges.","And still — across all of it —","I am reaching for you.","One orbit.","Look at the shape a single year makes.","Infinity —","two loops, far apart at the edges,","never once apart at the center.","And this is only the first."],
     months:["January","February","March","April","May","June","July","August","September","October","November","December"],
     date:(d,mo)=>`${mo} ${d}`,
     until:(n)=>`${n} ${n===1?"day":"days"} until the turn —<br>the orbit is already bringing us back.`,
@@ -225,7 +225,7 @@ const STR={
     hint:"scroll gently", farther:"farther", again:"begin again", soundOn:"sound on", soundOff:"sound off", love:"i love you",
     ord:(n)=>["","first","second","third","fourth","fifth","sixth","seventh","eighth","ninth","tenth"][n]||(n+"th"),
     annLine:(ord,ds)=>`the ${ord} · ${ds}` },
-  it:{ hero:["Stanotte siamo lontani.","Chilometri. Un oceano. Un buio senza confini.","Eppure — attraverso tutto questo —","cerco di raggiungerti.","Un'orbita.","Guarda la forma che traccia un solo anno.","Infinito —","due anelli, distanti ai bordi,","mai una volta separati al centro.","Ed è soltanto la prima."],
+  it:{ hero:["Stanotte siamo lontani.","Chilometri. Un oceano.\nUn buio senza confini.","Eppure — attraverso tutto questo —","cerco di raggiungerti.","Un'orbita.","Guarda la forma che traccia un solo anno.","Infinito —","due anelli, distanti ai bordi,","mai una volta separati al centro.","Ed è soltanto la prima."],
     months:["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"],
     date:(d,mo)=>`${d} ${mo}`,
     until:(n)=>`${n===1?"manca 1 giorno":n+" giorni"} al ritorno —<br>l'orbita ci sta già riportando indietro.`,
@@ -762,8 +762,10 @@ const sstep=(a,b,x)=>{ const t=Math.max(0,Math.min(1,(x-a)/((b-a)||1e-6))); retu
 const LF=[];   // living words, per line
 function buildWords(){ veil.innerHTML=""; LF.length=0;
   CONFIG.lines.forEach((L0,li)=>{ const line=document.createElement("div"); line.className="line"; line.style.opacity="1";
-    const words=L0.t.split(" "), items=[];
-    words.forEach((w,wi)=>{ const s=document.createElement("span"); s.className="wd"; s.textContent=w; line.appendChild(s); items.push({el:s}); if(wi<words.length-1) line.appendChild(document.createTextNode(" ")); });
+    const rows=L0.t.split("\n"), items=[];
+    rows.forEach((row,ri)=>{ const words=row.split(" ");
+      words.forEach((w,wi)=>{ const s=document.createElement("span"); s.className="wd"; s.textContent=w; line.appendChild(s); items.push({el:s}); if(wi<words.length-1) line.appendChild(document.createTextNode(" ")); });
+      if(ri<rows.length-1) line.appendChild(document.createElement("br")); });
     veil.appendChild(line); LF.push({li, appear:L0.at, step:L0.step, isLast:!!L0.last, el:line, words:items}); });
   measureWords(); }
 function measureWords(){
