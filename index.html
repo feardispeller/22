@@ -106,7 +106,7 @@
   #epiB{ top:48vh; font-size:clamp(1.1rem,3vw,1.55rem); font-style:italic; color:#cdd9ee; letter-spacing:.06em; }
   #epiInv{ top:38vh; font-size:clamp(1.5rem,4.2vw,2.5rem); letter-spacing:.012em; }
   #epiMeta{ bottom:13vh; font-size:clamp(1.05rem,2.9vw,1.45rem); font-style:italic; color:#d7e2f4; }
-  #vowVeil{ position:fixed; inset:0; z-index:4; opacity:0; pointer-events:none; transition:opacity 1.4s ease; background:radial-gradient(130% 96% at 50% 34%, rgba(3,5,11,.9) 0%, rgba(3,5,11,.78) 40%, rgba(3,5,11,.44) 74%, rgba(3,5,11,0) 100%); }
+  #vowVeil{ position:fixed; inset:0; z-index:4; display:none; opacity:0; pointer-events:none; transition:opacity 1.4s ease; background:radial-gradient(130% 96% at 50% 34%, rgba(3,5,11,.9) 0%, rgba(3,5,11,.78) 40%, rgba(3,5,11,.44) 74%, rgba(3,5,11,0) 100%); }
   #vowVeil.open{ opacity:1; }
   #vowMark{ position:fixed; top:11.5vh; left:0; right:0; margin:0 auto; width:160px; height:107px; z-index:8; opacity:0; pointer-events:none; cursor:pointer; transition:opacity 2.4s ease, filter 1.2s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); filter:drop-shadow(0 0 13px rgba(206,222,255,.22)); outline:none; -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none; touch-action:manipulation; }
   #vowMark.show{ opacity:.72; pointer-events:auto; animation:vmBreath 6.4s ease-in-out infinite; }
@@ -729,13 +729,13 @@ function playIntro(){ document.body.classList.add("pre"); document.documentEleme
     .add(()=>{ introEl.style.display="none"; hint.classList.add("show"); });                                       /* galaxy alive (it turns) → the invitation to begin */
   // ── BEGIN — leaving the splash: the galaxy recedes; then the journey opens into the dark (NO galaxy in the experience) ──
   const bloom=(e)=>{ if(bloomed) return; if(e&&e.target&&e.target.closest&&e.target.closest("#lang,#sound")) return;   /* tapping language/sound must not begin */
-    bloomed=true; breath.kill(); moteEl.style.opacity="0"; moteEl.style.display="none"; document.body.classList.remove("await"); hint.classList.remove("show");
+    bloomed=true; breath.kill(); removeEventListener("wheel",bloom); removeEventListener("touchstart",bloom); moteEl.style.opacity="0"; moteEl.style.display="none"; document.body.classList.remove("await"); hint.classList.remove("show");
     if(introEl.style.display!=="none") introEl.style.setProperty("--r","184%");                                     /* (in case begun before the iris finished) */
     gsap.timeline()
       .to(U.uBirth,{value:1,duration:0.35,ease:"power1.out"})                                                       /* make sure the galaxy is whole, even if begun early */
       .to(gal,{show:0,duration:1.8,ease:"power2.inOut"},"<")                                                        /* the splash galaxy recedes as we leave it — clean exit into the dark */
       .add(()=>{ document.body.classList.remove("pre"); introEl.style.display="none"; document.documentElement.classList.remove("hold"); document.body.classList.remove("hold"); _inSplash=false; hint.classList.add("show"); },"-=0.4"); };   /* release the scroll → the journey */
-  addEventListener("wheel",bloom,{passive:true,once:true}); addEventListener("touchstart",bloom,{passive:true,once:true});
+  addEventListener("wheel",bloom,{passive:true}); addEventListener("touchstart",bloom,{passive:true});
   addEventListener("keydown",e=>{ if(["ArrowDown","ArrowUp","PageDown","PageUp"," ","Spacebar","Enter","Home","End"].includes(e.key)) bloom(e); }); }
 let closeArmed=false, closeT0=0, closeAudio=false, duetHover=0, _duetSpin=0, epiP=0, closeLanded=false, epiGlow=0, _epiAudio=false, _epiTurn=false, _epiHome=false, _regressing=false, _closeS0=0.06, _closeCv0=0.08, _vowOpen=false, _vowDim=0;
 const HER2="Maria", YOU2="Brando";
@@ -901,7 +901,7 @@ function loop(){ if(document.hidden){ _looping=false; return; } _looping=true; c
   // ── THE CLOSE — Duet finale (Both): the one point becomes two, together; a present-tense landing; then hers to keep ──
   if(!reduced && mP>0.985 && !closeArmed){ closeArmed=true; closeT0=t; _closeS0=earth.scale.x; _closeCv0=cvF; setCloseCopy(); if(!closeAudio){ closeAudio=true; Audio2.chord([146.83,220,277.18,329.63],0.085); Audio2.returnVoices(); } }
   if(!reduced && mP<0.90 && closeArmed){ closeArmed=false; U.uCloseFade.value=1; earth.position.set(0,0,0); earth.visible=true; earth.scale.setScalar(0.9); sunCore.material.opacity=0; sunCorona.material.opacity=0; soulL.pts.position.set(0,0,0); soulR.pts.position.set(0,0,0); soulL.u.uOcc.value=1; soulR.u.uOcc.value=1; [closeLive,closeReturn,closeDed,closeReplay].forEach(e=>e.classList.remove("show")); orbitRing.visible=false; orbitArc.visible=false; orbitRing.material.opacity=0; orbitArc.material.opacity=0; markAnniv.material.opacity=0; markNow.material.opacity=0; conj.line.visible=false; conjWave.visible=false; tendrilMeshes.forEach(tm=>tm.visible=true); _alignBell=false;
-    closeLanded=false; epiP=0; epiGlow=0; epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; fartherEl.classList.remove("show"); [epiA,epiB,epiInv,epiMeta].forEach(e=>e.classList.remove("show")); farWorlds.mat.uniforms.uOp.value=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); }
+    closeLanded=false; epiP=0; epiGlow=0; epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; fartherEl.classList.remove("show"); [epiA,epiB,epiInv,epiMeta].forEach(e=>e.classList.remove("show")); farWorlds.mat.uniforms.uOp.value=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); vowVeil.style.display="none"; }
   if(closeArmed || reduced){ const cT=reduced?99:(t-closeT0);
     const cr=Math.max(0,Math.min(1,cT/2.2)), recede=Math.max(0,Math.min(1,cT/1.6)), set=Math.max(0,Math.min(1,cT/3.5));
     const o=_pv.set(0,-0.05,0).project(camera), oxs=(o.x*0.5+0.5)*innerWidth, oys=(-o.y*0.5+0.5)*innerHeight;
@@ -979,7 +979,7 @@ function loop(){ if(document.hidden){ _looping=false; return; } _looping=true; c
       orbitRing.material.opacity*=cf; orbitArc.material.opacity*=cf; markAnniv.material.opacity*=cf; markNow.material.opacity*=cf;
       epiA.classList.toggle("show", epiP>0.05 && epiP<REV*0.78); epiB.classList.toggle("show", epiP>REV*0.5 && epiP<REV+0.03);
       epiInv.classList.toggle("show", home>0.34 && home<0.92); epiMeta.classList.toggle("show", home>0.9); closeReplay.classList.toggle("show", home>0.93);
-      const showMark=home>0.955; vowMark.classList.toggle("show",showMark); if(!showMark&&_vowOpen){ _vowOpen=false; vowReveal.classList.remove("open"); vowMark.classList.remove("lit"); vowVeil.classList.remove("open"); }   // the seal — the mirrored 22, the ∞ — waits at the very end
+      const showMark=home>0.955; vowMark.classList.toggle("show",showMark); if(!showMark&&_vowOpen){ _vowOpen=false; vowReveal.classList.remove("open"); vowMark.classList.remove("lit"); vowVeil.classList.remove("open"); vowVeil.style.display="none"; }   // the seal — the mirrored 22, the ∞ — waits at the very end
       _vowDim+=((_vowOpen?1:0)-_vowDim)*0.08;                                                                            // when the vow opens, the heart dims to give it the field
       // ── the heart of it: looking through the lens, the words rise and beat ──
       const hv=Math.max(0,Math.min(1,(home-0.72)/0.22));
@@ -992,24 +992,28 @@ function loop(){ if(document.hidden){ _looping=false; return; } _looping=true; c
       if(!_epiAudio && epiP>0.03){ _epiAudio=true; Audio2.chord([110,164.81,220,329.63],0.06); }       // the vast opens — an open fifth
       if(!_epiTurn && home>0.02){ _epiTurn=true; Audio2.chord([146.83,220,277.18,329.63],0.08); }       // the turn home — warm resolve
       if(!_epiHome && home>0.9){ _epiHome=true; Audio2.bell(587.33,0.05); Audio2.bell(880,0.03); }        // arrival — a soft bell, home
-    } else { epiGlow=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; heart.visible=false; heart.material.opacity=0; heartRipple.visible=false; _heartTap=0; if(epiGroup.visible){ epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; farWorlds.mat.uniforms.uOp.value=0; [epiA,epiB,epiInv,epiMeta].forEach(e=>e.classList.remove("show")); _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); }
+    } else { epiGlow=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; heart.visible=false; heart.material.opacity=0; heartRipple.visible=false; _heartTap=0; if(epiGroup.visible){ epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; farWorlds.mat.uniforms.uOp.value=0; [epiA,epiB,epiInv,epiMeta].forEach(e=>e.classList.remove("show")); _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); vowVeil.style.display="none"; }
       if(closeLanded && !reduced) fartherEl.classList.add("show"); }
   }
   renderFrame(); requestAnimationFrame(loop); }
 
 $("lang").addEventListener("click",e=>{ const s=e.target.closest("span[data-l]"); if(!s)return; unlock(); setLang(s.getAttribute("data-l")); });   // EN/IT — switch the whole experience, before the first scroll
-function toggleVow(){ _vowOpen=!_vowOpen; vowReveal.classList.toggle("open",_vowOpen); vowMark.classList.toggle("lit",_vowOpen); vowVeil.classList.toggle("open",_vowOpen); if(_vowOpen&&Audio2&&Audio2.bell){ Audio2.bell(587.33,0.055); Audio2.bell(880,0.04); Audio2.bell(1174.66,0.03); } }   // press the mark → the cosmos pulls back into focus and the vow pours out (or folds)
+let _vowVeilT=0;
+function toggleVow(){ _vowOpen=!_vowOpen; vowReveal.classList.toggle("open",_vowOpen); vowMark.classList.toggle("lit",_vowOpen);
+  if(_vowOpen){ clearTimeout(_vowVeilT); vowVeil.style.display="block"; void vowVeil.offsetWidth; vowVeil.classList.add("open"); }
+  else { vowVeil.classList.remove("open"); clearTimeout(_vowVeilT); _vowVeilT=setTimeout(()=>{ if(!_vowOpen) vowVeil.style.display="none"; },1500); }
+  if(_vowOpen&&Audio2&&Audio2.bell){ Audio2.bell(587.33,0.055); Audio2.bell(880,0.04); Audio2.bell(1174.66,0.03); } }   // press the mark → the cosmos pulls back into focus and the vow pours out (or folds)
 vowMark.addEventListener("pointerdown",e=>e.stopPropagation());
 vowMark.addEventListener("click",e=>{ e.stopPropagation(); unlock(); toggleVow(); });
 closeReplay.addEventListener("click",()=>{ if(_regressing) return; _regressing=true;
   const tw=$("timewarp"); tw.classList.remove("run"); void tw.offsetWidth; tw.classList.add("run");           // the time-tunnel — rings rushing inward
   if(Audio2 && Audio2.chord) Audio2.chord([329.63,261.63,196,130.81],0.05);                                   // a descending shimmer — time unwinding
-  closeLanded=false; [epiA,epiB,epiInv,epiMeta,closeDed,closeReplay].forEach(el=>el.classList.remove("show")); _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open");
+  closeLanded=false; [epiA,epiB,epiInv,epiMeta,closeDed,closeReplay].forEach(el=>el.classList.remove("show")); _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); vowVeil.style.display="none";
   const ep={p:epiP}, sc={y:window.scrollY||window.pageYOffset||0};
   gsap.timeline()
     .to(ep,{p:0,duration:1.1,ease:"power2.in",onUpdate:()=>{ epiP=ep.p; }})                                   // dive back IN from the vast — the journey, reversed
     .to(sc,{y:0,duration:1.8,ease:"power2.inOut",onUpdate:()=>window.scrollTo(0,sc.y)})                        // then fall back through the close, the hero, to the first dark
-    .add(()=>{ epiP=0; epiGlow=0; epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; earth.scale.setScalar(0.9); earth.position.set(0,0,0); earth.visible=true; sunCore.material.opacity=0; sunCorona.material.opacity=0; closeLive.classList.remove("show"); farWorlds.mat.uniforms.uOp.value=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); _regressing=false; }); });
+    .add(()=>{ epiP=0; epiGlow=0; epiGroup.visible=false; epiEl.setAttribute("aria-hidden","true"); closeEl.style.opacity="1"; earth.scale.setScalar(0.9); earth.position.set(0,0,0); earth.visible=true; sunCore.material.opacity=0; sunCorona.material.opacity=0; closeLive.classList.remove("show"); farWorlds.mat.uniforms.uOp.value=0; farWorlds.mat.uniforms.uPx.value=isMobile?36:54; epiShape.points.visible=false; epiShape.mat.uniforms.uOp.value=0; _epiAudio=false; _epiTurn=false; _epiHome=false; _vowOpen=false; _vowDim=0; vowReveal.classList.remove("open"); vowMark.classList.remove("show","lit"); vowVeil.classList.remove("open"); vowVeil.style.display="none"; _regressing=false; }); });
 // ── EPILOGUE capture — once the Close has fully landed, further intent pulls us out through the scales (journey untouched) ──
 function epiReady(){ return closeLanded && !reduced; }
 addEventListener("wheel", e=>{ if(_regressing){ e.preventDefault(); return; } if(!epiReady()) return; if(epiP>0 || e.deltaY>0){ epiP=Math.max(0,Math.min(1,epiP+e.deltaY*0.00055)); if(epiP>0.0006) e.preventDefault(); } }, {passive:false});
